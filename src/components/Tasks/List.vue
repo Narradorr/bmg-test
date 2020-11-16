@@ -1,10 +1,17 @@
 <template>
   <div class="skeleton" v-if="isTaskListLoading">Loading...</div>
   <div class="list-task" v-else>
+    <div
+      class="icon_wrapper filter_wrapper"
+      title="Фильтрация"
+      @click="changeFilter()"
+    >
+      <img class="filter icon" src="~@/assets/filter.svg" alt="" />
+    </div>
+    <div class="search_wrapper">
+      <input type="text" v-model="search" placeholder="Живой поиск" />
+    </div>
     <template v-if="taskList.length > 0">
-      <div class="icon_wrapper filter_wrapper" title="Фильтрация" @click="changeFilter()">
-        <img class="filter icon" src="~@/assets/filter.svg" alt="">
-      </div>
       <div
         class="task-item"
         v-for="(item, index) in taskList"
@@ -24,7 +31,7 @@
         </div>
 
         <div class="task-item__name">
-          <span>   {{ item.name }}</span>
+          <span> {{ item.name }}</span>
         </div>
 
         <div class="task-item__description">
@@ -44,14 +51,32 @@ export default {
   data() {
     return {
       selectedTaskList: [],
+      search: "",
     };
+  },
+  watch: {
+    search(val) {
+      console.log(val);
+    },
   },
   computed: {
     isTaskListLoading() {
       return this.$store.getters["isTaskListLoading"];
     },
     taskList() {
-      return this.$store.getters["taskList"];
+      console.log("computed");
+      if (this.search) {
+        console.log("if search");
+
+        return this.$store.getters["taskList"].filter((item) => {
+          return (
+            item.name.toUpperCase().indexOf(this.search.toUpperCase()) > -1 ||
+            item.description.toUpperCase().indexOf(this.search.toUpperCase()) > -1
+          );
+        });
+      } else {
+        return this.$store.getters["taskList"];
+      }
     },
   },
   methods: {
@@ -71,7 +96,14 @@ export default {
 </script>
 
 <style lang="scss">
-.filter_wrapper{
+.skeleton {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 10rem;
+}
+
+.filter_wrapper {
   cursor: pointer;
   display: inline-flex;
   padding: 8px;
@@ -80,16 +112,16 @@ export default {
   align-items: center;
 }
 
-.filter_wrapper:hover{
+.filter_wrapper:hover {
   background-color: #dfdfdf;
 }
 
-.filter.icon{
+.filter.icon {
   width: 20px;
   height: 20px;
 }
 
-.list-task{
+.list-task {
   border-top: 1px solid #dfdfdf;
   text-align: left;
   padding: 0.5rem;

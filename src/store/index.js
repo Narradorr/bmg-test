@@ -56,13 +56,16 @@ export default new Vuex.Store({
       }
       else if (state.sortringMethod === "alphabet") {
         state.sortringMethod = "id";
-        
+
         state.taskList = state.taskList.sort((a, b) => {
           return a.id - b.id;
         });
       }
 
       console.log(state.sortringMethod);
+    },
+
+    searchFilter(){
     }
   },
   actions: {
@@ -87,6 +90,10 @@ export default new Vuex.Store({
 
     async changeFilter({ commit }) {
       commit("chageFilter")
+    },
+
+    async searchFilter({ commit }) {
+      commit("searchFilter")
     }
   },
   modules: {
